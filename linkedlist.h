@@ -15,11 +15,15 @@ struct LinkedList {
 };
 
 void initLinkedList(LinkedList*);
-LinkedList* appendNode(int, LinkedList*);
-LinkedList* appendNodeWithFirst(int, LinkedList*, LinkedList*);
+LinkedList* appendNode(const int, LinkedList*);
+LinkedList* appendNodeWithFirst(const int, LinkedList*, LinkedList*);
+LinkedList* getNode(const int, LinkedList*);
+
+int updateNode(LinkedList*, LinkedList*);
+
 int findNthValue(int, LinkedList*);
 
-int removeValue(int, LinkedList*);
+int removeValue(const int, LinkedList*);
 int removeFirst(LinkedList*);
 int removeLast(LinkedList*);
 
