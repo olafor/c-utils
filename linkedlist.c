@@ -9,7 +9,7 @@ void initLinkedList(LinkedList *node) {
 }
 
 LinkedList* appendNode(const int value, LinkedList *node) {
-    return appendNodeWithFirst(value, node, NULL);
+    return appendNodeWithFirst(value, node, node);
 }
 
 LinkedList* appendNodeWithFirst(const int value, LinkedList *node, LinkedList *first) {
@@ -43,10 +43,8 @@ LinkedList* appendNodeWithFirst(const int value, LinkedList *node, LinkedList *f
 
 LinkedList* getNode(const int value, LinkedList *node) {
     if (value != node->value) {
-        if (node->next) {
-
+        if (node->next)
             return getNode(value, node->next);
-        }
 
         return NULL;
     }
@@ -54,108 +52,108 @@ LinkedList* getNode(const int value, LinkedList *node) {
     return node;
 }
 
-int updateNode(LinkedList *newNode, LinkedList *node) {
-    if (newNode->value != node->value) {
-        if (node->next) {
-        
-            return updateNode(newNode, node->next);
-        }
-
-        return 0;
-    }
-
-
-}
-
 int findNthValue(int step, LinkedList *node) {
-    if ((step == 0) || (!node->next)) {
+    if ((step == 0) || (!node->next))
         return node->value;
-    }
 
     return findNthValue(--step, node->next);
 
 }
 
+void setLast(LinkedList *node, LinkedList *last) {
+    node->last = last;
+    if (node->next)
+        setLast(node->next, last);
+}
+
 int removeValue(const int value, LinkedList *node) {
     if (!(value == node->value)) {
-        if (!node->next) {
+        if (!node->next)
             return 0;
-        }
+
         return removeValue(value, node->next);
     }
 
-    LinkedList *nodeToFree = NULL;
     LinkedList *nextNode = NULL;
     LinkedList *prevNode = NULL;
+    node->value = 0;
 
-    if (node->next) {
+    if (node->next)
         nextNode = node->next;
-    }
 
-    if (node->prev) {
+    if (node->prev)
         prevNode = node->prev;
-    }
 
     if (!nextNode && !prevNode) {
-        node->value = 0;
-        return 0;
+        node->first = NULL;
+        node->last = NULL;
+        return value;
+    }
+
+    if (nextNode && !prevNode) {
+        node->value = nextNode->value;
+        node->next = nextNode->next;
+        nextNode->value = 0;
+        free(nextNode);
+        nextNode = NULL;
+        return value;
+    }
+
+    if (!nextNode && prevNode) {
+        setLast(node->first, node->prev);
+        prevNode->next = NULL;
     }
 
     if (nextNode && prevNode) {
         nextNode->prev = prevNode;
         prevNode->next = nextNode;
-        nodeToFree = node;
     }
 
-    if (nextNode && !prevNode) {
-        nodeToFree = nextNode;
+    free(node);
+    node = NULL;
 
-    }
-
-    if (!nextNode && prevNode) {
-
-    }
-
-    free(nodeToFree);
-
-    return 0;
+    return value;
 }
 
 int removeFirst(LinkedList *node) {
-    int value = node->value;
+    LinkedList *nodeFirst = node->first;
+    int value = nodeFirst->value;
 
-    if (!node->next) {
-        node->value = 0;
-        node->first = NULL;
-        node->last = NULL;
+    if (!nodeFirst->next) {
+        nodeFirst->value = 0;
+        nodeFirst->first = NULL;
+        nodeFirst->last = NULL;
         return value;
     }
 
-    LinkedList *newFirst = node->next;
-    LinkedList *newNext = newFirst->next;
+    LinkedList *nodeNext = nodeFirst->next;
+    nodeFirst->value = nodeNext->value;
+    nodeFirst->next = nodeNext->next;
 
-    node->next = newFirst->next;
-    node->value = newFirst->value;
-    newNext->prev = node;
-    free(newFirst);
+    free(nodeNext);
+    nodeNext = NULL;
 
     return value;
 }
 
 int removeLast(LinkedList *node) {
-    if (!node->next) {
-        int value = node->value;
-        node->value = 0;
-        node->first = NULL;
-        node->last = NULL;
+    LinkedList *nodeLast = node->last;
+    int value = nodeLast->value;
+    nodeLast->value = 0;
+
+    if (!nodeLast->prev) {
+        nodeLast->first = NULL;
+        nodeLast->last = NULL;
         return value;
     }
 
-    LinkedList *last = node->last;
-    LinkedList newLast = last->prev;
-    free(Last);
-    last = NULL;
+    nodeLast->prev->next = NULL;
+    setLast(nodeLast->first, nodeLast->prev);
+
+    free(nodeLast);
+    nodeLast = NULL;
     
+    return value;
 }
 
 void clearLinkedList(LinkedList *node) {
@@ -163,9 +161,10 @@ void clearLinkedList(LinkedList *node) {
         clearLinkedList(node->next);
         free(node->next);
         node->next = NULL;
-        node->last = NULL;
     }
 
+    node->value = 0;
     node->prev = NULL;
     node->first = NULL;
+    node->last = NULL;
 }

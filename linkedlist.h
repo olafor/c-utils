@@ -19,9 +19,9 @@ LinkedList* appendNode(const int, LinkedList*);
 LinkedList* appendNodeWithFirst(const int, LinkedList*, LinkedList*);
 LinkedList* getNode(const int, LinkedList*);
 
-int updateNode(LinkedList*, LinkedList*);
-
 int findNthValue(int, LinkedList*);
+
+void setLast(LinkedList*, LinkedList*);
 
 int removeValue(const int, LinkedList*);
 int removeFirst(LinkedList*);
